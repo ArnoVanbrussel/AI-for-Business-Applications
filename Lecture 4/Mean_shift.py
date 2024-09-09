@@ -4,7 +4,7 @@ from sklearn.cluster import MeanShift, estimate_bandwidth
 from itertools import cycle
 
 # Load data from input file
-X = np.loadtxt('data_clustering.txt', delimiter=',')
+X = np.loadtxt('Lecture 4/data_clustering.txt', delimiter=',')
 
 # Estimate the bandwidth of X
 bandwidth_X = estimate_bandwidth(X, quantile=0.1, n_samples=len(X))
