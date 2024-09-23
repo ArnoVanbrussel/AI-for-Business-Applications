@@ -3,61 +3,68 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
-import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 import joblib
 
-# Load the dataset
-df = pd.read_csv("Lecture 6/Hotel Review_ Case/Hotel Review_ Case/tripadvisor_hotel_reviews.csv")
+# load dataset
+df = pd.read_csv("Lecture 6/MovieReviews.csv")
 
-# Text preprocessing
+# convert 'Rating' to numeric, force invalid parsing to NaN
+df['Rating'] = pd.to_numeric(df['Rating'], errors='coerce')
+
+# drop rows with missing values in 'Rating' or 'Review' columns
+df.dropna(subset=['Rating', 'Review'], inplace=True)
+
+# text preprocessing
 stop_words = set(stopwords.words('english'))
 stemmer = PorterStemmer()
 
+
 def preprocess_text(text):
-    # Tokenization
+    # tokenization
     words = word_tokenize(text)
 
-    # Remove stopwords and apply stemming
+    # remove stopwords and apply stemming
     words = [stemmer.stem(word) for word in words if word not in stop_words]
-    
+
     return " ".join(words)
 
 df['Review'] = df['Review'].apply(preprocess_text)
 
 def map_rating(rating):
-    if rating > 3:
+    if rating > 6:
         return "positive"
-    elif rating == 3:
+    elif rating > 4:
         return "neutral"
     else:
         return "negative"
-    
+
 df['Sentiment'] = df['Rating'].apply(map_rating)
 
-# Split the data into training and testing sets
+# split data into training and testing sets
 X = df['Review']
 y = df['Sentiment']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
 
-# Convert text data to numerical features using TF-IDF vectorization
+# convert text data to numerical features using TF-IDF vectorization
 tfidf_vectorizer = TfidfVectorizer(max_features=5000)
 X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
 X_test_tfidf = tfidf_vectorizer.transform(X_test)
 
-# Train a Naive Bayes classifier
+# train a Naive Bayes classifier
 naive_bayes_classifier = MultinomialNB()
 naive_bayes_classifier.fit(X_train_tfidf, y_train)
 y_pred = naive_bayes_classifier.predict(X_test_tfidf)
 
-# Evaluate the model
+# evaluate model
 accuracy = accuracy_score(y_test, y_pred)
 
-# Save the trained model
-joblib.dump(naive_bayes_classifier, 'naive_bayes_model.pkl')
-joblib.dump(tfidf_vectorizer, 'tfidf_vectorizer.pkl')
+# save trained model
+joblib.dump(naive_bayes_classifier,'naive_bayes_model-movie.pkl')
+joblib.dump(tfidf_vectorizer,'tfidf_vectorizer-movie.pkl')
 
 print("Accuracy:", accuracy)

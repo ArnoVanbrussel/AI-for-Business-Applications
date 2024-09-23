@@ -24,7 +24,7 @@ def preprocess_text(text):
     return " ".join(words)
 
 # New review text (replace with your own review)
-new_review_text = "This hotel was excellent, I had a great stay."
+new_review_text = "Our stay at the hotel was amazing! The staff was very friendly and the room was clean and comfortable."
 
 # Preprocess the new review text
 preprocessed_text = preprocess_text(new_review_text)
