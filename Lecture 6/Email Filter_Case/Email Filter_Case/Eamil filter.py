@@ -9,7 +9,7 @@ from nltk.stem import PorterStemmer
 import nltk
 
 # Load the data
-data = pd.read_csv('spam.csv')
+data = pd.read_csv('Lecture 6/Email Filter_Case/Email Filter_Case/spam.csv')
 
 # Text preprocessing
 stop_words = set(stopwords.words('english'))
